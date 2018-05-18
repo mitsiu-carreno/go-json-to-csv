@@ -31,18 +31,18 @@ func toJson(n interface{}) string {
 
 func main(){
 	entries := getEntries()
-	for _, entry := range entries{
-		fmt.Println(entry.toString())
-	}
+	//for _, entry := range entries{
+		fmt.Println(entries.toString())
+	//}
 
 	fmt.Println(toJson(entries))
 }
 
-func getEntries() []MyEntry{
+func getEntries() MyEntry{
 	raw, err := ioutil.ReadFile("./input/page_test.json")
 	check(err)
 
-	var c []MyEntry
+	var c MyEntry
 	json.Unmarshal(raw, &c)
 	return c
 }

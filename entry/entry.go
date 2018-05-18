@@ -1,6 +1,6 @@
 package entry
 
-type Entry struct{
+type Entry struct{				
 	_id						string `json:"_id"`
 	FOLIO					string `json:"FOLIO"`
 	FECHASOLICITUD			string `json:"FECHASOLICITUD"`
