@@ -15,6 +15,12 @@ func check(e error){
 }
 
 type Entry struct {
+    ID    int    `json:"id"`
+    Title string `json:"title"`
+    Url   string `json:"url"`
+}
+
+type Entry3 struct {
     ID    					string `json:"_id"`
 	FOLIO					string `json:"FOLIO"`
 	FECHASOLICITUD			string `json:"FECHASOLICITUD"`
@@ -38,30 +44,31 @@ type Entry struct {
 	SECTOR					string `json:"SECTOR"`
 }
 
-func (p Entry) toString() string{
-	return toJson(p)
+func (n Entry) toString() string {
+	return toJson(n)
 }
 
-func toJson(p interface{}) string{
-	bytes, err := json.Marshal(p)
+func toJson(n interface{}) string {
+	bytes, err := json.Marshal(n)
 	check(err)
+
 	return string(bytes)
-} 
+}
 
 func main(){
-	files := getFiles()
-	for _, p := range files{
-		fmt.Println(p.toString())
+	entries := getEntries()
+	for _, entry := range entries{
+		fmt.Println(entry.toString())
 	}
 
-	fmt.Println(toJson(files))
+	fmt.Println(toJson(entries))
 }
 
-func getFiles() []Entry {
-	raw, err := ioutil.ReadFile("/Users/jorandradefig/Desktop/Projects/inai_solicitudes/scrapper/output/page_1.json")
+func getEntries() []Entry{
+	raw, err := ioutil.ReadFile("./input/pages.json")
 	check(err)
 
-	var c[]Entry
+	var c []Entry
 	json.Unmarshal(raw, &c)
 	return c
 }
