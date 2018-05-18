@@ -4,7 +4,7 @@ import(
 	"fmt"
 	"io/ioutil"
 	"encoding/json"
-	// models "github.com/mitsiu-carreno/go-json-to-csv/entry"
+	models "github.com/mitsiu-carreno/go-json-to-csv/entry"
 )
 
 func check(e error){
@@ -14,37 +14,11 @@ func check(e error){
 	}
 }
 
-type Entry struct {
-    ID    int    `json:"id"`
-    Title string `json:"title"`
-    Url   string `json:"url"`
+type MyEntry struct{
+	models.Entry
 }
 
-type Entry3 struct {
-    ID    					string `json:"_id"`
-	FOLIO					string `json:"FOLIO"`
-	FECHASOLICITUD			string `json:"FECHASOLICITUD"`
-	DEPENDENCIA				string `json:"DEPENDENCIA"`
-	ESTATUS					string `json:"ESTATUS"`
-	MEDIOENTRADA			string `json:"MEDIOENTRADA"`
-	TIPOSOLICITUD			string `json:"TIPOSOLICITUD"`
-	DESCRIPCIONSOLICITUD	string `json:"DESCRIPCIONSOLICITUD"`
-	OTROSDATOS				string `json:"OTROSDATOS"`
-	ARCHIVOADJUNTOSOLICITUD	string `json:"ARCHIVOADJUNTOSOLICITUD"`
-	MEDIOENTREGA			string `json:"MEDIOENTREGA"`
-	FECHALIMITE				string `json:"FECHALIMITE"`
-	RESPUESTA				string `json:"RESPUESTA"`
-	TEXTORESPUESTA			string `json:"TEXTORESPUESTA"`
-	ARCHIVORESPUESTA		string `json:"ARCHIVORESPUESTA"`
-	FECHARESPUESTA			string `json:"FECHARESPUESTA"`
-	PAIS					string `json:"PAIS"`
-	ESTADO					string `json:"ESTADO"`
-	MUNICIPIO				string `json:"MUNICIPIO"`
-	CODIGOPOSTAL			string `json:"CODIGOPOSTAL"`
-	SECTOR					string `json:"SECTOR"`
-}
-
-func (n Entry) toString() string {
+func (n MyEntry) toString() string {
 	return toJson(n)
 }
 
@@ -64,11 +38,11 @@ func main(){
 	fmt.Println(toJson(entries))
 }
 
-func getEntries() []Entry{
-	raw, err := ioutil.ReadFile("./input/pages.json")
+func getEntries() []MyEntry{
+	raw, err := ioutil.ReadFile("./input/page_test.json")
 	check(err)
 
-	var c []Entry
+	var c []MyEntry
 	json.Unmarshal(raw, &c)
 	return c
 }
