@@ -1,7 +1,8 @@
 package entry
 
+// Entry struct of the objects that we care about
 type Entry struct{				
-	_id						string `json:"_id"`
+	ID						string `json:"_id"`
 	FOLIO					string `json:"FOLIO"`
 	FECHASOLICITUD			string `json:"FECHASOLICITUD"`
 	DEPENDENCIA				string `json:"DEPENDENCIA"`
