@@ -4,7 +4,9 @@ import(
 	"os"
 	"fmt"
 	"strconv"
+	"io"
 	"io/ioutil"
+	"archive/zip"
 	"encoding/csv"
 	"encoding/json"
 	models "github.com/mitsiu-carreno/go-json-to-csv/entry"
@@ -42,7 +44,8 @@ func toJson(n interface{}) string {
 func main(){
 
 	var outputPath = "./output/"
-	var outfileName ="merge.csv"
+	var outfileCSVName ="INAI-Solicitudes.csv"
+	var outfileZIPName = "INAI-Solicitudes.zip"
 	
 	// Check if output directory exists
 	_, err := os.Stat(outputPath)
@@ -53,7 +56,7 @@ func main(){
 	}
 
 	// Create new file
-	outfile, err := os.Create(outputPath + outfileName)
+	outfile, err := os.Create(outputPath + outfileCSVName)
 	check(err)
 	defer outfile.Close()
 
@@ -73,6 +76,8 @@ func main(){
 			writeCSV(entry, outfile)
 		}
 	}
+
+	zipFile(outputPath + outfileCSVName, outputPath + outfileZIPName)
 }
 
 func getPage(pageNum int) NewPage{
@@ -94,4 +99,44 @@ func writeCSV(entry Entry, file *os.File){
 	err =  writer.Error()
 	check(err);
 
+}
+
+func zipFile(fileToZip string, zippedFile string){
+	
+	// Create zip 
+	newZip, err := os.Create(zippedFile)
+	check(err)
+	defer newZip.Close()
+
+	zipWriter := zip.NewWriter(newZip)
+	defer zipWriter.Close()
+
+	//Open file to zip
+	zipFile, err := os.Open(fileToZip)
+	check(err)
+	defer zipFile.Close()
+
+	//Check if input file exists and get info
+	info, err := os.Stat(fileToZip)
+	if os.IsNotExist(err){
+		fmt.Println("Archivo no encontrado" +  fileToZip)
+	}
+	check(err)
+
+	header, err := zip.FileInfoHeader(info)
+	check(err)
+
+	//Deflate offers a better compresion
+	header.Method = zip.Deflate
+
+	//Set headers to writer
+	writer, err := zipWriter.CreateHeader(header)
+	check(err)
+
+	// Zip file
+	_, err = io.Copy(writer, zipFile)
+	check(err)
+
+	zipFile.Close()
+	
 }
