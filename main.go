@@ -2,9 +2,10 @@ package main
 
 import(
 	"os"
-	"fmt"
-	"strconv"
 	"io"
+	"fmt"
+	"html"
+	"strconv"
 	"io/ioutil"
 	"archive/zip"
 	"encoding/csv"
@@ -77,7 +78,6 @@ func main(){
 		}
 	}
 
-	zipFile(outputPath + outfileCSVName, outputPath + outfileZIPName)
 }
 
 func getPage(pageNum int) NewPage{
@@ -94,49 +94,9 @@ func writeCSV(entry Entry, file *os.File){
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	err := writer.Write([]string{entry.ID, entry.FOLIO, entry.FECHASOLICITUD, entry.DEPENDENCIA, entry.ESTATUS, entry.MEDIOENTRADA, entry.TIPOSOLICITUD, entry.DESCRIPCIONSOLICITUD, entry.OTROSDATOS, entry.ARCHIVOADJUNTOSOLICITUD, entry.MEDIOENTREGA, entry.FECHALIMITE, entry.RESPUESTA, entry.TEXTORESPUESTA, entry.ARCHIVORESPUESTA, entry.FECHARESPUESTA, entry.PAIS, entry.ESTADO, entry.MUNICIPIO, entry.CODIGOPOSTAL, entry.SECTOR})
+	err := writer.Write([]string{entry.ID, entry.FOLIO, entry.FECHASOLICITUD, html.UnescapeString(entry.DEPENDENCIA), entry.ESTATUS, entry.MEDIOENTRADA, entry.TIPOSOLICITUD, entry.DESCRIPCIONSOLICITUD, entry.OTROSDATOS, entry.ARCHIVOADJUNTOSOLICITUD, entry.MEDIOENTREGA, entry.FECHALIMITE, entry.RESPUESTA, html.UnescapeString(entry.TEXTORESPUESTA), entry.ARCHIVORESPUESTA, entry.FECHARESPUESTA, entry.PAIS, entry.ESTADO, entry.MUNICIPIO, entry.CODIGOPOSTAL, entry.SECTOR})
 	check(err)
 	err =  writer.Error()
 	check(err);
 
-}
-
-func zipFile(fileToZip string, zippedFile string){
-	
-	// Create zip 
-	newZip, err := os.Create(zippedFile)
-	check(err)
-	defer newZip.Close()
-
-	zipWriter := zip.NewWriter(newZip)
-	defer zipWriter.Close()
-
-	//Open file to zip
-	zipFile, err := os.Open(fileToZip)
-	check(err)
-	defer zipFile.Close()
-
-	//Check if input file exists and get info
-	info, err := os.Stat(fileToZip)
-	if os.IsNotExist(err){
-		fmt.Println("Archivo no encontrado" +  fileToZip)
-	}
-	check(err)
-
-	header, err := zip.FileInfoHeader(info)
-	check(err)
-
-	//Deflate offers a better compresion
-	header.Method = zip.Deflate
-
-	//Set headers to writer
-	writer, err := zipWriter.CreateHeader(header)
-	check(err)
-
-	// Zip file
-	_, err = io.Copy(writer, zipFile)
-	check(err)
-
-	zipFile.Close()
-	
 }
