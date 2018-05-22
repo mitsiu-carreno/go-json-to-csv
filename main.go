@@ -31,7 +31,6 @@ func main(){
 
 	var outputPath = "./output/"
 	var outfileCSVName ="INAI-Solicitudes.csv"
-	var outfileZIPName = "INAI-Solicitudes.zip"
 	
 	// Check if output directory exists
 	_, err := os.Stat(outputPath)
